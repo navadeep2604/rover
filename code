@@ -1,0 +1,60 @@
+#include <LiquidCrystal.h>
+
+// LCD setup: (RS, E, D4, D5, D6, D7)
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
+
+// Motor Driver Pins
+#define IN1 9
+#define IN2 8
+#define IN3 10
+#define IN4 11
+
+// Buzzer Pin
+#define BUZZER 12
+
+// Soil Moisture Sensor Pin
+#define SOIL_SENSOR A0
+
+void setup() {
+    pinMode(IN1, OUTPUT);
+    pinMode(IN2, OUTPUT);
+    pinMode(IN3, OUTPUT);
+    pinMode(IN4, OUTPUT);
+    pinMode(BUZZER, OUTPUT);
+    pinMode(SOIL_SENSOR, INPUT);
+    
+    lcd.begin(16, 2);
+    lcd.print("Rower System");
+}
+
+void loop() {
+    int moisture = analogRead(SOIL_SENSOR);
+    int threshold = 500; // Adjust based on soil type
+    
+    lcd.setCursor(0, 1);
+    lcd.print("Moisture: ");
+    lcd.print(moisture);
+
+    if (moisture < threshold) {
+        digitalWrite(BUZZER, HIGH);
+        moveForward();
+    } else {
+        digitalWrite(BUZZER, LOW);
+        stopRower();
+    }
+    delay(1000);
+}
+
+void moveForward() {
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+}
+
+void stopRower() {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+}
